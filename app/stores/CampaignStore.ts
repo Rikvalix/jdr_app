@@ -1,4 +1,4 @@
-import { ca } from "@nuxt/ui/runtime/locale/index.js";
+import { ca, da } from "@nuxt/ui/runtime/locale/index.js";
 import { defineStore } from "pinia";
 import { description } from "valibot";
 import useSupabase from "~/composables/supabaseClient";
@@ -19,20 +19,46 @@ export const useCampaignStore = defineStore("campaignStore", {
       this.campaigns = result.data as CampaignModel[];
     },
 
-    async addCampaign(campaign: Partial<CampaignModel>) {
-      const { error } = await useSupabase()
+    async getCampaignsByUserId(userId: number) : Promise<CampaignModel[]|null> {
+      const { data, error } = await useSupabase()
         .from("campaigns")
-        .insert({
-          name: campaign.name,
-          description: campaign.description,
-          game_master_id: campaign.game_master_id,
-        })
-        
+        .select( `
+            *,
+            players_campaigns!inner()
+        `)
+        .eq('players_campaigns.player_id', userId);
+
+        if (error) {
+          return null;
+        }
+        return data as CampaignModel[];
+    },
+
+    async getCampaignById(id: number): Promise<CampaignModel | null> {
+      const { data, error } = await useSupabase()
+        .from("campaigns")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        return null;
+      }
+      return data;
+    },
+
+    async addCampaign(campaign: Partial<CampaignModel>) {
+      const { error } = await useSupabase().from("campaigns").insert({
+        name: campaign.name,
+        description: campaign.description,
+        game_master_id: campaign.game_master_id,
+      });
+
       if (error) {
         console.error(error);
-        return false
+        return false;
       }
-      return true
+      return true;
     },
   },
 });
