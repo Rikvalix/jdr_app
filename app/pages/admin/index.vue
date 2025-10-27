@@ -22,7 +22,7 @@ onMounted(async () => {
   <head>
     <title>Dashboard</title>
   </head>
-  <UContainer>
+  <UContainer class="h-svh">
     <h1 class="text-3xl font-bold">
       Dashboard <span class="text-secondary">administrateur</span>
     </h1>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // Variables
+import CarouselComponent from "~/components/forms/CarouselComponent.vue";
 import type UserModel from "~/models/UserModel";
 import useUserStore from "~/stores/UserStore";
 
@@ -56,49 +57,55 @@ onMounted(async () => {
   <head>
     <title>Accueil</title>
   </head>
-  <UContainer class="flex flex-col items-center justify-center h-screen">
-    <div class="text-center">
-      <h2 class="text-3xl font-bold">Bienvenue à la taverne du JDR</h2>
-      <p>
-        Donnez vie à vos héros. Créez, gérez et retrouvez vos fiches
-        personnages.
-      </p>
 
-      <UButton
-        @click="handleShowProfileSelector"
-        variant="outline"
-        class="mt-4"
+    <UContainer class="flex flex-col items-center justify-center h-screen">
+      <div class="text-center">
+        <h2 class="text-3xl font-bold">Bienvenue à la taverne du <span class="text-primary">JDR</span></h2>
+        <p>
+          Donnez vie à vos héros. Créez, gérez et retrouvez vos fiches
+          personnages.
+        </p>
+
+        <UButton
+          @click="handleShowProfileSelector"
+          class="mt-4"
+          size="xl"
+        >
+          Accéder à mon profil
+        </UButton>
+      </div>
+      <UCard
+        v-if="showProfileSelector"
+        class="rounded-2xl shadow-md p-4 mt-4 w-full max-w-sm"
       >
-        Accéder à mon profil
-      </UButton>
-    </div>
-    <UCard
-      v-if="showProfileSelector"
-      class="rounded-2xl shadow-md p-4 mt-4 w-full max-w-sm"
-    >
-      <UForm @submit="handleProfileSelectorSubmit">
-        <USkeleton v-if="loadingUser" type="rect" class="w-full h-12" />
-        <div v-else class="flex flex-row gap-4" >
-          <USelect
-            v-model="profileSelector"
-            :items="usersOptions"
-            value-attribute="id"
-            option-attribute="name"
-            placeholder="Choisis ton nom"
-            class="w-full"
-          />
+        <UForm @submit="handleProfileSelectorSubmit">
+          <USkeleton v-if="loadingUser" type="rect" class="w-full h-12" />
+          <div v-else class="flex flex-row gap-4">
+            <USelect
+              v-model="profileSelector"
+              :items="usersOptions"
+              value-attribute="id"
+              option-attribute="name"
+              placeholder="Choisis ton nom"
+              class="w-full"
+            />
 
-          <UButton
-            icon="i-lucide-arrow-right"
-            type="submit"
-            variant="outline"
-            class="px-4 py-2"
-            size="lg"
-          />
-        </div>
-      </UForm>
-    </UCard>
-  </UContainer>
+            <UButton
+              icon="i-lucide-arrow-right"
+              type="submit"
+              variant="outline"
+              class="px-4 py-2"
+              size="lg"
+            />
+          </div>
+        </UForm>
+      </UCard>
+      <div class="mt-10 sm:block hidden">
+        <CarouselComponent />
+      </div>
+    </UContainer>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>

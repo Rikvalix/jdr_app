@@ -40,7 +40,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="p-4 md:p-8 max-w-7xl mx-auto">
+  <div class="p-4 md:p-8 max-w-7xl mx-auto  ">
     <div v-if="loading" class="flex justify-center items-center h-64">
       <UProgress animation="swing" size="xl" />
       <span class="ml-3 text-lg">Chargement de la fiche...</span>

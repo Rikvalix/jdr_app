@@ -1,5 +1,5 @@
 <template>
-  <UContainer>
+  <UContainer class="h-svh">
     <div class="mt-3">
         <AddCharacterComponent/>
     </div>

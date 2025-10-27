@@ -1,45 +1,49 @@
+import { da } from "@nuxt/ui/runtime/locale/index.js";
 import useSupabase from "~/composables/supabaseClient";
 import type UserModel from "~/models/UserModel";
 
-const useUserStore = defineStore('user', {
-    state: () => ({
-        user: {} as UserModel,
-        users : [] as UserModel[],
-    }),
+const useUserStore = defineStore("user", {
+  state: () => ({
+    user: {} as UserModel,
+    users: [] as UserModel[],
+  }),
 
-    actions: {
-        async getAllUsers() {
-            if (this.users.length != 0){
-                return;
-            }
-            
-            const result = await useSupabase()
-                .from('players')
-                .select('*');
+  actions: {
+    async getAllUsers() {
+      if (this.users.length != 0) {
+        return;
+      }
 
-            if (result.error) {
-                console.error(result.error);
-            }
-            this.users = result.data as UserModel[];
-            
-        },
+      const result = await useSupabase().from("players").select("*");
 
-        setCurrentUser(user: UserModel) {
-            this.user = user;
-        },
+      if (result.error) {
+        console.error(result.error);
+      }
+      this.users = result.data as UserModel[];
+    },
 
-        getCurrentUser() {
-            return this.user
-        },
+    async getUserById(id: number) {
+      const { data, error } = await useSupabase()
+        .from("players")
+        .select("*")
+        .eq("id", id)
+        .single();
+      if (error) {
+        return null;
+      }
+      return data;
+    },
 
-        setStubUser() {
-            this.user = {
-                id: 1,
-                name: "Titouan",
-                avatar_url: "https://avatars.githubusercontent.com/u/103690945?v=4",
-            };
-        }
-    }
-})
+   
+
+    setCurrentUser(user: UserModel) {
+      this.user = user;
+    },
+
+    getCurrentUser() {
+      return this.user;
+    },
+  },
+});
 
 export default useUserStore;

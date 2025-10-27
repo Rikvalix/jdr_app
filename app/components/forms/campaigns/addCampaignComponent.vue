@@ -80,15 +80,17 @@ async function onCampaignFormSubmit(event: FormSubmitEvent<Schema>) {
           class="w-full"
         />
       </UFormField>
+      <UFormField label="Game master" name="game_master">
+        <USelect
+          v-model="campaignModel.game_master_id"
+          :items="usersOptions"
+          value-attribute="id"
+          option-attribute="name"
+          placeholder="Game master"
+          class="w-full"
+        />
+      </UFormField>
 
-      <USelect
-        v-model="campaignModel.game_master_id"
-        :items="usersOptions"
-        value-attribute="id"
-        option-attribute="name"
-        placeholder="Game master"
-        class="w-full"
-      />
       <UButton icon="i-lucide-rocket" size="lg" type="submit">
         Ajouter
       </UButton>
