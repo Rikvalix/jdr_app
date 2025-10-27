@@ -2,6 +2,10 @@
 @import '@nuxt/ui';
 
 
+:root {
+    --ui-primary : hsl(38, 97%, 59%)
+}
+
 @theme {
     --font-sans: 'Public Sans', sans-serif;
 }

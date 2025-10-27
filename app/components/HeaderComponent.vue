@@ -2,15 +2,9 @@
 
 <template>
   <div class="pt-4 pl-2 pr-2 mb-4 flex justify-between">
-    <UButton
-      icon="i-lucide-house"
-      variant="outline"
-      to="/"
-      class="px-4 py-2"
-      size="lg"
-    />
-
-    <h3 class="text-2xl font-bold">Taverne du JDR</h3>
+    <NuxtLink to="/">
+      <h3 class="text-2xl font-bold">Taverne du <span class="text-primary">JDR</span></h3>
+    </NuxtLink>
 
     <div class="flex gap-4">
       <UButton
@@ -18,14 +12,14 @@
         variant="outline"
         to="/profile"
         class="px-4 py-2"
-        size="lg"
+        size="xl"
       />
       <UButton
-        icon="i-lucide-lock-keyhole"  
+        icon="i-lucide-lock-keyhole"
         variant="outline"
         to="/admin"
         class="px-4 py-2"
-        size="lg"
+        size="xl"
       />
     </div>
   </div>

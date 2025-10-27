@@ -22,7 +22,7 @@ onMounted(async () => {
   <head>
     <title>Profile</title>
   </head>
-  <UContainer class="flex flex-col gap-4">
+  <UContainer class="flex flex-col gap-4 h-svh">
     <h1 class="text-2xl font-bold">
       Bienvenue <span class="text-primary">{{ user.name }}</span>
     </h1>
@@ -85,6 +85,12 @@ onMounted(async () => {
               />
             </li>
           </ul>
+          <UButton 
+          to="/profile/characters/add" 
+          variant="outline"
+          class="mt-4"
+          icon="i-lucide-plus"
+          >Ajouter un personnage</UButton>
         </div>
       </template>
     </UCard>
