@@ -1,0 +1,12 @@
+services:
+  nuxt:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: nuxt
+    environment:
+      - NUXT_PUBLIC_SUPABASE_URL=${NUXT_PUBLIC_SUPABASE_URL}
+      - NUXT_PUBLIC_SUPABASE_ANON_KEY=${NUXT_PUBLIC_SUPABASE_ANON_KEY}
+    ports:
+      - "127.0.0.1:5010:3000"
+    restart: always
