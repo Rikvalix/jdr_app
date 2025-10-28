@@ -40,7 +40,10 @@ onMounted(async () => {
       <template #default>
         <p>{{ campaign?.description }}</p>
       </template>
-      <template #footer> Game master: <span class="text-primary">{{ gameMaster?.name }}</span> </template>
+      <template #footer> 
+        <p>Game master: <span class="text-primary">{{ gameMaster?.name }}</span> </p>
+        <p>Nombre de joueurs: <span class="text-primary">{{  }}</span></p>
+      </template>
     </UCard>
 
     <UCard class="mt-2">
