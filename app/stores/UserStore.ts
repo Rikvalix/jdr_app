@@ -17,7 +17,7 @@ const useUserStore = defineStore("user", {
       const result = await useSupabase().from("players").select("*");
 
       if (result.error) {
-        console.error(result.error);
+        return [];
       }
       this.users = result.data as UserModel[];
     },

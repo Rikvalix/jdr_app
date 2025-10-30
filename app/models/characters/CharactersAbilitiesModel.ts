@@ -1,4 +1,4 @@
-export default interface CharacterAbilities {
+export default interface CharacterAbilitiesModel {
     id : number,
     character_id: number,
     name: string,

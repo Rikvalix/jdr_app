@@ -3,9 +3,9 @@
     v-slot="{ item }"
     :items="items"
     :autoplay="{ delay: 4000 }"
-    class="w-full  mx-auto"
+    class="mx-auto"
   >
-    <img :src="item" class="rounded-lg" />
+    <img :src="item" class="rounded-lg w-1/2" />
   </UCarousel>
 </template>
 
