@@ -1,7 +1,6 @@
 <script setup lang="ts">
 // Variables
 import CarouselComponent from "~/components/forms/CarouselComponent.vue";
-import type UserModel from "~/models/UserModel";
 import useUserStore from "~/stores/UserStore";
 
 const router = useRouter();
@@ -39,11 +38,7 @@ function handleProfileSelectorSubmit() {
     userStore.setCurrentUser(selectedUser);
 
     router.push("/profile");
-  } else {
-    console.error(
-      "Erreur : Impossible de retrouver l'utilisateur sélectionné."
-    );
-  }
+  } 
 }
 
 onMounted(async () => {
@@ -58,7 +53,7 @@ onMounted(async () => {
     <title>Accueil</title>
   </head>
 
-    <UContainer class="flex flex-col items-center justify-center h-screen">
+    <UContainer class="flex flex-col items-center justify-center h-svh">
       <div class="text-center">
         <h2 class="text-3xl font-bold">Bienvenue à la taverne du <span class="text-primary">JDR</span></h2>
         <p>
@@ -100,9 +95,7 @@ onMounted(async () => {
           </div>
         </UForm>
       </UCard>
-      <div class="mt-10 sm:block hidden">
-        <CarouselComponent />
-      </div>
+
     </UContainer>
 </template>
 

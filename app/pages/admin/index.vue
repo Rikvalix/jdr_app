@@ -23,8 +23,8 @@ onMounted(async () => {
     <title>Dashboard</title>
   </head>
   <UContainer class="h-svh">
-    <h1 class="text-3xl font-bold">
-      Dashboard <span class="text-secondary">administrateur</span>
+    <h1 class="text-3xl font-bold text-primary">
+       Dashboard
     </h1>
     <div class="mt-4">
       <UCard class="mb-4">

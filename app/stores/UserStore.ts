@@ -17,7 +17,7 @@ const useUserStore = defineStore("user", {
       const result = await useSupabase().from("players").select("*");
 
       if (result.error) {
-        console.error(result.error);
+        return [];
       }
       this.users = result.data as UserModel[];
     },
@@ -34,8 +34,6 @@ const useUserStore = defineStore("user", {
       return data;
     },
 
-   
-
     setCurrentUser(user: UserModel) {
       this.user = user;
     },
@@ -43,6 +41,10 @@ const useUserStore = defineStore("user", {
     getCurrentUser() {
       return this.user;
     },
+
+    isLogin() : boolean {
+      return this.user.id != null
+    }
   },
 });
 

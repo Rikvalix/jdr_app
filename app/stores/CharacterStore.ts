@@ -2,10 +2,12 @@ import { defineStore } from "pinia";
 import useSupabase from "~/composables/supabaseClient";
 import type CharacterModel from "~/models/characters/CharacterModel";
 import type { CharacterListItem } from "~/models/characters/CharacterListItem";
+import type { CharacterClassModel } from "~/models/characters/CharacterClassModel";
 
 const useCharacterStore = defineStore("characterStore", {
   state: () => ({
     myCharacters: [] as Array<CharacterModel>,
+    shortClasses: [] as Array<Partial<CharacterClassModel>>,
   }),
   actions: {
     async addCharacter(data: Partial<CharacterModel>) {
@@ -43,7 +45,6 @@ const useCharacterStore = defineStore("characterStore", {
         });
 
       if (error) {
-        console.error("Erreur d'insertion du personnage:", error);
         return false;
       }
 
@@ -63,8 +64,32 @@ const useCharacterStore = defineStore("characterStore", {
         .single();
 
       if (error) {
-        console.error(error)
+        return null;
       }
+      return data;
+    },
+
+    async getFullCharacterById(id: number) {
+      const { data, error } = await useSupabase()
+        .from("characters")
+        .select(
+          `
+          *, 
+          characters_class!inner( class (*) )
+          characters_bonds!inner( bonds (*) )
+          characters_attack!inner( attacks (*) )
+          `
+        )
+        /*
+          abilities(*),
+          bonds(*),
+          attacks(*)
+          */
+        .eq("id", id);
+      if (error) {
+        return null;
+      }
+      console.table(data);
       return data;
     },
 
@@ -81,12 +106,60 @@ const useCharacterStore = defineStore("characterStore", {
         .eq("player_id", userId);
 
       if (error) {
-        console.error(error);
+        return [];
       }
       if (data == null) {
         return [];
       }
       return data;
+    },
+
+    async getAllCharacterByCampaignId(
+      campaignId: Number
+    ): Promise<CharacterModel[] | []> {
+      const { data, error } = await useSupabase()
+        .from("characters")
+        .select(
+          ` 
+          *
+        `
+        )
+        .eq("campaign_id", campaignId);
+
+      if (error) {
+        return [];
+      }
+      if (data == null) {
+        return [];
+      }
+      return data;
+    },
+
+    /**
+     * Gestion des classes de personnages
+     */
+
+    async addClass(data: Partial<CharacterClassModel>) {
+      const { error } = await useSupabase().from("class").insert({
+        name: data.name,
+        description: data.description,
+      });
+
+      if (error) {
+        return false;
+      }
+      return true;
+    },
+
+    async getAllClass() {
+      const { data, error } = await useSupabase().from("class").select(` 
+        id,
+        name
+        `);
+        if (error) {
+          return;
+        }
+        this.shortClasses = data;
     },
   },
 });

@@ -16,7 +16,7 @@ const characterId = computed(() => {
 
 async function fetchCharacter() {
   loading.value = true;
-  const result = await characterStore.getCharacterById(characterId.value);
+  const result = await characterStore.getFullCharacterById(characterId.value);
   loading.value = false;
 
   if (result == null) {

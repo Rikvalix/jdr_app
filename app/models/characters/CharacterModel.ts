@@ -1,6 +1,7 @@
-import type CampaignModel from "./CampaignModel";
+import type { CharacterClassModel } from "./CharacterClassModel";
+import type CharacterAbilitiesModel from "./CharactersAbilitiesModel";
 
-export default interface CharacterModel {
+export default interface CharacterModel extends FullCharacterInterface{
     id: number;
     name: string;
     concept: string;
@@ -18,5 +19,10 @@ export default interface CharacterModel {
     charisme: number;
     inventory: string; // Json stringified
     created_at: Date;
+}
+
+interface FullCharacterInterface {
+    character_class: CharacterClassModel
+    character_abilities: CharacterAbilitiesModel
 }
 

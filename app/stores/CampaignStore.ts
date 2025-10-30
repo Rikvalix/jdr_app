@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import { description } from "valibot";
 import useSupabase from "~/composables/supabaseClient";
 import type CampaignModel from "~/models/CampaignModel";
+import type CharacterModel from "~/models/characters/CharacterModel";
 
 export const useCampaignStore = defineStore("campaignStore", {
   state: () => ({
@@ -14,7 +15,7 @@ export const useCampaignStore = defineStore("campaignStore", {
       const result = await useSupabase().from("campaigns").select("*");
 
       if (result.error) {
-        console.error(result.error);
+        return [];
       }
       this.campaigns = result.data as CampaignModel[];
     },
@@ -55,7 +56,6 @@ export const useCampaignStore = defineStore("campaignStore", {
       });
 
       if (error) {
-        console.error(error);
         return false;
       }
       return true;
