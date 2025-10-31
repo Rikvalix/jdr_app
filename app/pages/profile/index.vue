@@ -4,21 +4,26 @@ import useUserStore from "~/stores/UserStore";
 import useCharacterStore from "~/stores/CharacterStore";
 import type { CharacterListItem } from "~/models/characters/CharacterListItem";
 import type CampaignModel from "~/models/CampaignModel";
+import useCampaignStore from "~/stores/CampaignStore";
 
 // Variables
 const userStore = useUserStore();
 const campaignStore = useCampaignStore();
 const characterStore = useCharacterStore();
-const user = storeToRefs(userStore).user;
+const user = storeToRefs(userStore).currentUser;
 const characters = ref<CharacterListItem[]>([]);
 const loading = ref(false);
 const campaigns = ref<CampaignModel[] | null>([]);
 
 onMounted(async () => {
-  loading.value = true;
-  characters.value = await characterStore.getAllCharacterForUser(user.value.id);
-  campaigns.value = await campaignStore.getCampaignsByUserId(user.value.id);
-  loading.value = false;
+  if (user.value != null) {
+    loading.value = true;
+    characters.value = await characterStore.getAllCharacterForUser(
+      user.value.id
+    );
+    campaigns.value = await campaignStore.getCampaignsByUserId(user.value.id);
+    loading.value = false;
+  }
 });
 </script>
 
@@ -28,54 +33,48 @@ onMounted(async () => {
   </head>
   <UContainer class="flex flex-col gap-4 h-svh">
     <h1 class="text-2xl font-bold">
-      Bienvenue <span class="text-primary">{{ user.name }}</span>
+      Bienvenue <span class="text-primary">{{ user?.name }}</span>
     </h1>
     <UCard>
       <template #header>
         <h4 class="text-lg font-medium mb-3 text-gray-500 dark:text-gray-400">
           Vos campagnes en courts :
         </h4>
-          <ul
-            :class="[
-              'grid gap-3',
-              campaigns && campaigns.length > 0
-                ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
-                : 'grid-cols-1',
-            ]"
-          >
+        <ul
+          :class="[
+            'grid gap-3',
+            campaigns && campaigns.length > 0
+              ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+              : 'grid-cols-1',
+          ]"
+        >
           <li v-for="campaign in campaigns" :key="campaign.id">
-              <UCard class="p- transition-all duration-300 group">
-                <NuxtLink
-                  :to="`/campaign/${campaign.id}`"
-                  class="block w-full"
-                >
-                  <div class="flex items-center justify-between">
-                    <span
-                      class="text-md font-medium truncate group-hover:text-primary"
-                    >
-                      {{ campaign.name }}
-                    </span>
-                    <UIcon
-                      name="i-lucide-arrow-right"
-                      class="w-5 h-5 group-hover:text-primary transition-colors"
-                    />
-                  </div>
-                </NuxtLink>
-              </UCard>
-            </li>
+            <UCard class="p- transition-all duration-300 group">
+              <NuxtLink :to="`/campaign/${campaign.id}`" class="block w-full">
+                <div class="flex items-center justify-between">
+                  <span
+                    class="text-md font-medium truncate group-hover:text-primary"
+                  >
+                    {{ campaign.name }}
+                  </span>
+                  <UIcon
+                    name="i-lucide-arrow-right"
+                    class="w-5 h-5 group-hover:text-primary transition-colors"
+                  />
+                </div>
+              </NuxtLink>
+            </UCard>
+          </li>
 
-            <li
-              v-if="!campaigns || campaigns.length === 0"
-              class="col-span-full"
-            >
-              <UAlert
-                icon="i-lucide-scroll-text"
-                title="Aucune campagne trouvé"
-                description="Créez votre première campagne pour commencer l 'aventure !"
-                variant="soft"
-              />
-            </li>
-          </ul>
+          <li v-if="!campaigns || campaigns.length === 0" class="col-span-full">
+            <UAlert
+              icon="i-lucide-scroll-text"
+              title="Aucune campagne trouvé"
+              description="Créez votre première campagne pour commencer l 'aventure !"
+              variant="soft"
+            />
+          </li>
+        </ul>
       </template>
     </UCard>
     <UCard>

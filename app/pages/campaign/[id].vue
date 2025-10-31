@@ -2,6 +2,7 @@
 import type CampaignModel from "~/models/CampaignModel";
 import type CharacterModel from "~/models/characters/CharacterModel";
 import type UserModel from "~/models/UserModel";
+import useCampaignStore from "~/stores/CampaignStore";
 import useCharacterStore from "~/stores/CharacterStore";
 import useUserStore from "~/stores/UserStore";
 

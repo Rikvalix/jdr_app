@@ -56,7 +56,7 @@ const isDark = computed({
         />
       </ClientOnly>
 
-      <div v-if="userStore.isLogin()" class="hidden md:flex gap-4">
+      <div v-if="userStore.isLogin" class="hidden md:flex gap-4">
         <UButton
           icon="i-lucide-user"
           variant="outline"
@@ -84,7 +84,7 @@ const isDark = computed({
       </div>
 
       <UDropdownMenu
-        v-if="userStore.isLogin()"
+        v-if="userStore.isLogin"
         :items="dropdownItems"
         :popper="{ placement: 'bottom' }"
         class="md:hidden"
