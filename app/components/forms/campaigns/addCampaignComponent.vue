@@ -3,6 +3,7 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 import * as v from "valibot";
 import type CampaignModel from "~/models/CampaignModel";
 import useUserStore from "~/stores/UserStore";
+import useCampaignStore from "~/stores/CampaignStore";
 
 type Schema = v.InferOutput<typeof campaignSchema>;
 
@@ -11,7 +12,7 @@ const campaignStore = useCampaignStore();
 const userStore = useUserStore();
 const toast = useToast();
 const users = storeToRefs(userStore).users;
-const currentUser = storeToRefs(userStore).user;
+const currentUser = storeToRefs(userStore).currentUser;
 const campaignSchema = v.object({
   name: v.pipe(v.string(), v.minLength(2)),
   description: v.pipe(v.string(), v.minLength(2)),
@@ -21,7 +22,7 @@ const campaignSchema = v.object({
 const campaignModel = ref<Partial<CampaignModel>>({
   name: "",
   description: "",
-  game_master_id: currentUser.value.id,
+  game_master_id: currentUser.value?.id,
 });
 
 // Computed

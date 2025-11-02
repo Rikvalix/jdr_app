@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type UserModel from "~/models/UserModel";
 import useUserStore from "~/stores/UserStore";
+import useCampaignStore from "~/stores/CampaignStore";
 
 // Variables
 const userStore = useUserStore();
