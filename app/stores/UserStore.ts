@@ -1,60 +1,54 @@
-import useSupabase from "~/composables/supabaseClient";
 import type UserModel from "~/models/UserModel";
-import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
 
+const useUserStore = defineStore(
+  "user",
+  () => {
+    const currentUser = ref<UserModel | null>(null);
+    const users = ref<UserModel[]>([]);
 
-const useUserStore = defineStore('user', () => {
-  
-  const currentUser = ref<UserModel | null>(null)
-  const users = ref<UserModel[]>([])
+    const isLogin = computed(() => !!currentUser.value?.id);
 
-  const isLogin = computed(() => !!currentUser.value?.id)
-  
-  async function getAllUsers() {
-    if (users.value.length !== 0) {
-      return
+    async function getAllUsers() {
+      const response = await $fetch("/api/players");
+
+      if (response == undefined) {
+        return;
+      }
+
+      users.value = response.data;
     }
 
-    const { data, error } = await useSupabase().from("players").select("*")
+    async function getUserById(id: number) : Promise<UserModel | null> {
 
-    if (error) {
-      console.error("Erreur lors de la récupération des utilisateurs:", error)
-      return
+      const response = await $fetch(`/api/players/${id}`);
+
+      if (response == undefined) {
+        return null;
+      }
+
+      return response.data as UserModel;
     }
-    
-    users.value = data as UserModel[]
-  }
 
-  async function getUserById(id: number) {
-    const { data, error } = await useSupabase()
-      .from("players")
-      .select("*")
-      .eq("id", id)
-      .single()
-      
-    if (error) {
-      console.error(`Erreur getUserById ${id}:`, error)
-      return null
+    function setCurrentUser(user: UserModel) {
+      currentUser.value = user;
     }
-    return data
-  }
 
-  function setCurrentUser(user: UserModel) {
-    currentUser.value = user
+    return {
+      currentUser,
+      users,
+      isLogin,
+      getAllUsers,
+      getUserById,
+      setCurrentUser,
+    };
+  },
+  {
+    persist: {
+      storage: piniaPluginPersistedstate.sessionStorage(),
+    },
   }
-
-  return {
-    currentUser,
-    users,
-    isLogin,
-    getAllUsers,
-    getUserById,
-    setCurrentUser
-  }
-}, {
-  persist: true,
-})
+);
 
 export default useUserStore;
-
