@@ -1,5 +1,6 @@
 services:
   nuxt:
+    image: jdr_nuxt:latest
     build: 
       context: .
       dockerfile: Dockerfile
