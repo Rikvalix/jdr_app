@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type CampaignModel from "~/models/CampaignModel";
 import type CharacterModel from "~/models/characters/CharacterModel";
-import type UserModel from "~/models/UserModel";
 import useCampaignStore from "~/stores/CampaignStore";
 import useCharacterStore from "~/stores/CharacterStore";
 import useUserStore from "~/stores/UserStore";
@@ -12,7 +11,6 @@ const userStore = useUserStore();
 const characterStore = useCharacterStore();
 const route = useRoute();
 const campaign = ref<CampaignModel | null>();
-const gameMaster = ref<UserModel | null>();
 const charactersCampaigns = ref<CharacterModel[] | []>();
 
 // Computed
@@ -28,9 +26,6 @@ onMounted(async () => {
   campaign.value = await campaignStore.getCampaignById(campaignId.value);
   // Chercher le game master
   if (campaign.value != null) {
-    gameMaster.value = await userStore.getUserById(
-      campaign.value.game_master_id
-    );
     charactersCampaigns.value =
       await characterStore.getAllCharacterByCampaignId(campaign.value.id);
   }
@@ -50,7 +45,7 @@ onMounted(async () => {
       </template>
       <template #footer>
         <p>
-          Game master: <span class="text-primary">{{ gameMaster?.name }}</span>
+          Game master: <span class="text-primary">{{ campaign?.gameMaster.name }}</span>
         </p>
         <p>
           Nombre de joueurs:

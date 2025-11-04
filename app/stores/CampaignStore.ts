@@ -1,74 +1,62 @@
-import { defineStore } from "pinia";
-import { ref } from "vue";
+import {defineStore} from "pinia";
+import {ref} from "vue";
 import useSupabase from "~/composables/supabaseClient";
 import type CampaignModel from "~/models/CampaignModel";
 
 const useCampaignStore = defineStore("campaignStore", () => {
-  const campaigns = ref<Array<CampaignModel>>([]);
-  const currentCampaign = ref<CampaignModel | null>(null);
+    const campaigns = ref<Array<CampaignModel>>([]);
+    const currentCampaign = ref<CampaignModel | null>(null);
 
-  async function getAllCampaigns() {
-    const result = await useSupabase().from("campaigns").select("*");
+    async function getAllCampaigns() {
+        const response = await $fetch("/api/campaigns")
 
-    if (result.error) {
-      return;
+        if (response == undefined) {
+            return;
+        }
+        campaigns.value = response.data as CampaignModel[];
     }
-    campaigns.value = result.data as CampaignModel[];
-  }
 
-  async function getCampaignsByUserId(
-    userId: number
-  ): Promise<CampaignModel[] | null> {
-    const { data, error } = await useSupabase()
-      .from("campaigns")
-      .select(
-        `
-            *,
-            players_campaigns!inner()
-        `
-      )
-      .eq("players_campaigns.player_id", userId);
+    async function getCampaignsByUserId(
+        userId: number
+    ): Promise<CampaignModel[] | null> {
+        const response = await $fetch("/api/campaigns?userId=" + userId);
 
-    if (error) {
-      return null;
+        if (response == undefined) {
+            return [];
+        }
+
+        return response.data as CampaignModel[];
     }
-    return data as CampaignModel[];
-  }
 
-  async function getCampaignById(id: number): Promise<CampaignModel | null> {
-    const { data, error } = await useSupabase()
-      .from("campaigns")
-      .select("*")
-      .eq("id", id)
-      .single();
+    async function getCampaignById(id: number): Promise<CampaignModel | null> {
+        const response = await $fetch("/api/campaigns?campaignId=" + id);
 
-    if (error) {
-      return null;
+        if (response == undefined) {
+            return null;
+        }
+
+        return response.data as CampaignModel;
     }
-    return data;
-  }
 
-  async function addCampaign(campaign: Partial<CampaignModel>) {
-    const { error } = await useSupabase().from("campaigns").insert({
-      name: campaign.name,
-      description: campaign.description,
-      game_master_id: campaign.game_master_id,
-    });
+    async function addCampaign(campaign: Partial<CampaignModel>) {
+        const {error} = await useSupabase().from("campaigns").insert({
+            name: campaign.name,
+            description: campaign.description,
+            game_master_id: 6,
+        });
 
-    if (error) {
-      return false;
+        return !error;
+
     }
-    return true;
-  }
 
-  return {
-    campaigns,
-    currentCampaign,
-    getAllCampaigns,
-    getCampaignsByUserId,
-    getCampaignById,
-    addCampaign,
-  };
+    return {
+        campaigns,
+        currentCampaign,
+        getAllCampaigns,
+        getCampaignsByUserId,
+        getCampaignById,
+        addCampaign,
+    };
 });
 
 export default useCampaignStore;

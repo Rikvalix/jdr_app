@@ -5,7 +5,7 @@ export class CampaignEntity {
   #name: string;
   #description: string;
   #gameMaster: PlayerEntity;
-  #created_at: Date;
+  #createdAt: Date;
 
   constructor(
     id: number,
@@ -18,7 +18,7 @@ export class CampaignEntity {
     this.#name = name;
     this.#description = description;
     this.#gameMaster = gameMaster;
-    this.#created_at = created_at
+    this.#createdAt = created_at
   }
 
   public get id() : number {
@@ -38,6 +38,6 @@ export class CampaignEntity {
   }
 
   public get createdAt(): Date {
-    return this.#created_at;
+    return this.#createdAt;
   }
 }

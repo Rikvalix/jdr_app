@@ -49,5 +49,12 @@ export default class PlayerRepository implements IPlayerRepository {
 
         return new PlayerEntity(data.id, data.name, data.avatar_url);
     }
+
+    public static dataToPlayer(data: any): PlayerEntity {
+        if (!data) {
+            return  new PlayerEntity(0, "", "")
+        }
+        return new PlayerEntity(data.id, data.name, data.avatar_url)
+    }
     
 }

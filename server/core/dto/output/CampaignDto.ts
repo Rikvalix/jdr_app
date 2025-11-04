@@ -4,6 +4,6 @@ export interface CampaignDto {
     id: number,
     name: string,
     description: string,
-    gameMaster: PlayerDto,
+    gameMaster: PlayerDto | null,
     createdAt: Date
 }
