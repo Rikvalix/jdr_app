@@ -2,11 +2,12 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import useSupabase from "~/composables/supabaseClient";
 import type CharacterModel from "~/models/characters/CharacterModel";
-import type { CharacterListItem } from "~/models/characters/CharacterListItem";
+import type { ShortCharacterModel } from "~/models/characters/ShortCharacterModel";
 import type { CharacterClassModel } from "~/models/characters/CharacterClassModel";
 
 const useCharacterStore = defineStore("characterStore", () => {
   const myCharacters = ref<Array<CharacterModel>>([]);
+  const myShortCharacters = ref<ShortCharacterModel[]>([]);
   const shortClasses = ref<Array<Partial<CharacterClassModel>>>([]);
 
   async function addCharacter(data: Partial<CharacterModel>) {
@@ -87,27 +88,8 @@ const useCharacterStore = defineStore("characterStore", () => {
     return data;
   }
 
-  async function getAllCharacterForUser(
-    userId: Number
-  ): Promise<CharacterListItem[]> {
-    const { data, error } = await useSupabase()
-      .from("characters")
-      .select(
-        `
-          id,
-          name,
-          campaign:campaign_id (name) 
-        `
-      )
-      .eq("player_id", userId);
-
-    if (error) {
-      return [];
-    }
-    if (data == null) {
-      return [];
-    }
-    return data;
+  function  setAllCharacterForUser(data: ShortCharacterModel[]) {
+    myShortCharacters.value = data
   }
 
   async function getAllCharacterByCampaignId(
@@ -156,11 +138,12 @@ const useCharacterStore = defineStore("characterStore", () => {
 
   return {
     myCharacters,
+    myShortCharacters,
     shortClasses,
     addCharacter,
     getCharacterById,
     getFullCharacterById,
-    getAllCharacterForUser,
+    setAllCharacterForUser,
     getAllCharacterByCampaignId,
     addClass,
     getAllClass,

@@ -1,4 +1,4 @@
-import CreateCampaignDto from "~~/server/core/dto/input/CreateCampaignDto";
+import {CreateCampaignDto} from "~~/server/core/dto/input/CreateCampaignDto";
 import {CampaignEntity} from "~~/server/core/entity/CampaignEntity";
 
 export default interface ICampaignRepository {
@@ -9,6 +9,9 @@ export default interface ICampaignRepository {
 
     getCampaignById(id: number) : Promise<CampaignEntity | null>
 
-    addCampaign(dto: CreateCampaignDto) : Promise<CampaignEntity>
+    getCampaignByName(name: string) : Promise<CampaignEntity | null>
+
+    addCampaign(dto: CreateCampaignDto) : Promise<CampaignEntity | null>
+
 
 }

@@ -1,21 +1,8 @@
 <script setup lang="ts">
-import useUserStore from "~/stores/UserStore";
-import useCampaignStore from "~/stores/CampaignStore";
 
-// Variables
-const userStore = useUserStore();
-const users = storeToRefs(userStore).users;
-const loading = ref(false);
-const campaignStore = useCampaignStore();
-const campaigns = storeToRefs(campaignStore).campaigns;
+const {data: usersData, pending : usersPending} = await useFetch('/api/players')
+const {data: campaignsData, pending: campaignsPending} = await useFetch('/api/campaigns')
 
-// onMounted
-onMounted(async () => {
-  loading.value = true;
-  await userStore.getAllUsers();
-  await campaignStore.getAllCampaigns();
-  loading.value = false;
-});
 </script>
 
 <template>
@@ -32,16 +19,16 @@ onMounted(async () => {
           <h3 class="font-semibold">Gestion des utilisateurs</h3>
         </template>
         <template #default>
-          <div v-if="loading" class="grid gap-2">
+          <div v-if="usersPending" class="grid gap-2">
             <USkeleton class="h-4 w-[250px]" />
             <USkeleton class="h-4 w-[200px]" />
           </div>
-          <div v-else-if="users.length === 0">
+          <div v-else-if="usersData?.data.length === 0">
             <p>Aucun utilisateur trouvé.</p>
           </div>
           <div v-else>
             <ul>
-              <li v-for="user in users">
+              <li v-for="user in usersData?.data">
                 <div class="flex justify-between mt-2">
                   {{ user.name }}
                   <div class="flex gap-2">
@@ -63,7 +50,7 @@ onMounted(async () => {
             <USeparator class="my-4" />
             <span class="mt-2"
               >Total utilisateurs :
-              <span class="font-bold">{{ users.length }}</span></span
+              <span class="font-bold">{{ usersData?.data.length }}</span></span
             >
           </div>
         </template>
@@ -78,15 +65,15 @@ onMounted(async () => {
           <h3 class="font-semibold">Gestion des campagnes</h3>
         </template>
         <template #default>
-          <div v-if="loading" class="grid gap-2">
+          <div v-if="campaignsPending" class="grid gap-2">
             <USkeleton class="h-4 w-[250px]" />
             <USkeleton class="h-4 w-[200px]" />
           </div>
-          <div v-else-if="campaigns.length === 0">
+          <div v-else-if="campaignsData?.data.length === 0">
             <p>Aucune campagne(s) trouvé(es).</p>
           </div>
-          <ul>
-            <li v-for="campaign in campaigns">
+          <ul v-else>
+            <li v-for="campaign in campaignsData?.data">
               <div class="flex justify-between mt-2">
                 <NuxtLink
                   class="text-secondary"

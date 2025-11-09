@@ -1,17 +1,9 @@
 <script lang="ts" setup>
 import type CampaignModel from "~/models/CampaignModel";
-import type CharacterModel from "~/models/characters/CharacterModel";
-import useCampaignStore from "~/stores/CampaignStore";
-import useCharacterStore from "~/stores/CharacterStore";
-import useUserStore from "~/stores/UserStore";
+import type ShortCharacterModel from "~/models/characters/ShortCharacterModel";
 
 // Variables
-const campaignStore = useCampaignStore();
-const userStore = useUserStore();
-const characterStore = useCharacterStore();
 const route = useRoute();
-const campaign = ref<CampaignModel | null>();
-const charactersCampaigns = ref<CharacterModel[] | []>();
 
 // Computed
 const campaignId = computed(() => {
@@ -21,15 +13,28 @@ const campaignId = computed(() => {
   return parseInt(id === undefined ? "0" : id);
 });
 
-// onMounted
-onMounted(async () => {
-  campaign.value = await campaignStore.getCampaignById(campaignId.value);
-  // Chercher le game master
-  if (campaign.value != null) {
-    charactersCampaigns.value =
-      await characterStore.getAllCharacterByCampaignId(campaign.value.id);
-  }
-});
+const {data: campaignData, pending: campaignPending} = await useAsyncData(
+    "campaignDataById",
+    async () => {
+      if (!campaignId.value) {
+        return Promise.reject(new Error("Campaign ID est requis"));
+      }
+      const response = await $fetch(`/api/campaigns?campaignId=${campaignId.value}`);
+      return response?.data as CampaignModel;
+    }
+)
+
+const {data: charactersData, pending: charactersPending} = await useAsyncData(
+    "charactersDataByCampaignId",
+    async () => {
+      if (!campaignId.value) {
+        return Promise.reject(new Error("Campaign ID est requis"));
+      }
+      const response = await $fetch(`/api/characters?campaignId=${campaignId.value}`);
+      return response?.data as ShortCharacterModel[];
+    }
+)
+
 </script>
 
 <template>
@@ -37,19 +42,19 @@ onMounted(async () => {
     <UCard>
       <template #header>
         <h2 class="text-xl font-semibold text-primary">
-          {{ campaign?.name }}
+          {{ campaignData?.name }}
         </h2>
       </template>
       <template #default>
-        <p>{{ campaign?.description }}</p>
+        <p>{{ campaignData?.description }}</p>
       </template>
       <template #footer>
         <p>
-          Game master: <span class="text-primary">{{ campaign?.gameMaster.name }}</span>
+          Game master: <span class="text-primary">{{ campaignData?.gameMaster.name }}</span>
         </p>
         <p>
           Nombre de joueurs:
-          <span class="text-primary">{{ charactersCampaigns?.length }}</span>
+          <span class="text-primary">{{ charactersData?.length }}</span>
         </p>
       </template>
     </UCard>
@@ -61,13 +66,13 @@ onMounted(async () => {
       <template #default>
         <div class="grid grid-cols-2 gap-2">
           <UUser
-            v-for="character in charactersCampaigns"
+            v-for="character in charactersData"
             :to="`/profile/characters/${character.id}`"
             :key="character.id"
             class="p-1 border rounded-lg border-accented"
             orientation="vertical"
             :name="character.name"
-            :description="character.classe"
+
             :chip="{
               color: 'primary',
               position: 'top-right',

@@ -10,14 +10,8 @@ const useUserStore = defineStore(
 
     const isLogin = computed(() => !!currentUser.value?.id);
 
-    async function getAllUsers() {
-      const response = await $fetch("/api/players");
-
-      if (response == undefined) {
-        return;
-      }
-
-      users.value = response.data;
+    function setAllUsers(data: UserModel[]) {
+      users.value = data;
     }
 
     async function getUserById(id: number) : Promise<UserModel | null> {
@@ -39,7 +33,7 @@ const useUserStore = defineStore(
       currentUser,
       users,
       isLogin,
-      getAllUsers,
+      setAllUsers,
       getUserById,
       setCurrentUser,
     };

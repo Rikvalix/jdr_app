@@ -10,7 +10,7 @@ FROM node:20-alpine AS runtime
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install --only=production
+RUN npm install --omit=dev
 COPY --from=builder /app/.output /app/.output
 EXPOSE 5010
 

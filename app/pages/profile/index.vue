@@ -2,7 +2,7 @@
 import { storeToRefs } from "pinia";
 import useUserStore from "~/stores/UserStore";
 import useCharacterStore from "~/stores/CharacterStore";
-import type { CharacterListItem } from "~/models/characters/CharacterListItem";
+import type { ShortCharacterModel } from "~/models/characters/ShortCharacterModel";
 import type CampaignModel from "~/models/CampaignModel";
 import useCampaignStore from "~/stores/CampaignStore";
 
@@ -11,20 +11,39 @@ const userStore = useUserStore();
 const campaignStore = useCampaignStore();
 const characterStore = useCharacterStore();
 const user = storeToRefs(userStore).currentUser;
-const characters = ref<CharacterListItem[]>([]);
-const loading = ref(false);
-const campaigns = ref<CampaignModel[] | null>([]);
+const characters = storeToRefs(characterStore).myShortCharacters;
+const campaigns = storeToRefs(campaignStore).campaigns;
 
-onMounted(async () => {
-  if (user.value != null) {
-    loading.value = true;
-    characters.value = await characterStore.getAllCharacterForUser(
-      user.value.id
-    );
-    campaigns.value = await campaignStore.getCampaignsByUserId(user.value.id);
-    loading.value = false;
+const { data: campaignData, pending: campaignPending } = await useAsyncData(
+  "campaignData",
+  async () => {
+    if (!user.value?.id) {
+      return Promise.resolve(null);
+    }
+
+    const response = await $fetch(`/api/campaigns?userId=${user.value.id}`);
+    
+    campaignStore.setCampaignsByUserId(response?.data as CampaignModel[])
+  },
+  {
+    watch: [user],
   }
-});
+);
+const { data: charactersData, pending: charactersPending } = await useAsyncData(
+  "charactersData",
+  async () => {
+    if (!user.value?.id) {
+      return Promise.resolve(null);
+    }
+    const response = await $fetch(`/api/characters?userId=${user.value.id}`);
+
+    characterStore.setAllCharacterForUser(response?.data as ShortCharacterModel[]);
+  },
+  {
+    watch: [user],
+  }
+);
+
 </script>
 
 <template>
@@ -38,9 +57,10 @@ onMounted(async () => {
     <UCard>
       <template #header>
         <h4 class="text-lg font-medium mb-3 text-gray-500 dark:text-gray-400">
-          Vos campagnes en courts :
+          Vos campagnes en cours :
         </h4>
         <ul
+          v-if="campaigns.length > 0"
           :class="[
             'grid gap-3',
             campaigns && campaigns.length > 0
@@ -66,7 +86,10 @@ onMounted(async () => {
             </UCard>
           </li>
 
-          <li v-if="!campaigns || campaigns.length === 0" class="col-span-full">
+          <li
+            v-if="!campaigns || campaigns.length === 0"
+            class="col-span-full"
+          >
             <UAlert
               icon="i-lucide-scroll-text"
               title="Aucune campagne trouvé"

@@ -1,6 +1,5 @@
 import {defineStore} from "pinia";
 import {ref} from "vue";
-import useSupabase from "~/composables/supabaseClient";
 import type CampaignModel from "~/models/CampaignModel";
 
 const useCampaignStore = defineStore("campaignStore", () => {
@@ -16,36 +15,19 @@ const useCampaignStore = defineStore("campaignStore", () => {
         campaigns.value = response.data as CampaignModel[];
     }
 
-    async function getCampaignsByUserId(
-        userId: number
-    ): Promise<CampaignModel[] | null> {
-        const response = await $fetch("/api/campaigns?userId=" + userId);
-
-        if (response == undefined) {
-            return [];
-        }
-
-        return response.data as CampaignModel[];
-    }
-
-    async function getCampaignById(id: number): Promise<CampaignModel | null> {
-        const response = await $fetch("/api/campaigns?campaignId=" + id);
-
-        if (response == undefined) {
-            return null;
-        }
-
-        return response.data as CampaignModel;
+    async function setCampaignsByUserId(data: CampaignModel[]){
+        campaigns.value = data;
     }
 
     async function addCampaign(campaign: Partial<CampaignModel>) {
-        const {error} = await useSupabase().from("campaigns").insert({
-            name: campaign.name,
-            description: campaign.description,
-            game_master_id: 6,
-        });
+        const result = await $fetch("/api/campaigns", {
+            method: 'POST',
+            body: {
+                campaign
+            },
+        })
 
-        return !error;
+        return result.data;
 
     }
 
@@ -53,8 +35,7 @@ const useCampaignStore = defineStore("campaignStore", () => {
         campaigns,
         currentCampaign,
         getAllCampaigns,
-        getCampaignsByUserId,
-        getCampaignById,
+        setCampaignsByUserId,
         addCampaign,
     };
 });

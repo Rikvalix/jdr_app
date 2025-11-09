@@ -16,12 +16,20 @@ export class PlayerService {
   public async getPlayerById(id: number): Promise<PlayerDto> {
     const data = await this.playerRepository.findUserById(id);
     if (data == null) {
-        throw createError({
-            status: 400,
-            statusMessage: "l'ID est inexistant"
-        })
-        
+      throw createError({
+        status: 400,
+        statusMessage: "l'ID est inexistant",
+      });
     }
     return PlayerMapper.toDto(data);
-}
+  }
+
+  /**
+   * Vérifie si l'utilisateur existe, si true => oui, si false => non
+   * @param id 
+   * @returns 
+   */
+  public async playerExist(id: number) : Promise<boolean> {
+    return await this.playerRepository.findUserById(id) != null;
+  }
 }

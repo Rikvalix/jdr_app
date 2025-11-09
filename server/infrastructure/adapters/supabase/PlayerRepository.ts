@@ -20,15 +20,13 @@ export default class PlayerRepository implements IPlayerRepository {
             .select("*")
         
         if (error) {
-            // TODO: Mettre un logger
             return []
         }
         if (!data) {
             return []
         }
         return data.map((item: any) => {
-            // TODO: Voir pour un mapper auto
-            return new PlayerEntity(item.id, item.name, item.avatar_url)
+            return PlayerRepository.mapObjectToEntity(item)
         })
     }
 
@@ -47,10 +45,10 @@ export default class PlayerRepository implements IPlayerRepository {
             return null
         }
 
-        return new PlayerEntity(data.id, data.name, data.avatar_url);
+        return PlayerRepository.mapObjectToEntity(data);
     }
 
-    public static dataToPlayer(data: any): PlayerEntity {
+    public static mapObjectToEntity(data: any): PlayerEntity {
         if (!data) {
             return  new PlayerEntity(0, "", "")
         }
