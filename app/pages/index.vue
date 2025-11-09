@@ -1,6 +1,5 @@
 <script setup lang="ts">
 // Variables
-import CarouselComponent from "~/components/forms/CarouselComponent.vue";
 import useUserStore from "~/stores/UserStore";
 
 const router = useRouter();
@@ -9,7 +8,6 @@ const showProfileSelector = ref(false);
 const profileSelector = ref<number | undefined>(undefined);
 const userStore = useUserStore();
 const users = storeToRefs(userStore).users;
-const loadingUser = ref(false);
 
 // Computed
 const usersOptions = computed(() =>
@@ -36,16 +34,19 @@ function handleProfileSelectorSubmit() {
 
   if (selectedUser) {
     userStore.setCurrentUser(selectedUser);
-
     router.push("/profile");
   } 
 }
 
-onMounted(async () => {
-  loadingUser.value = true;
-  await userStore.getAllUsers();
-  loadingUser.value = false;
-});
+
+const {data, pending} = await useFetch('/api/players', {
+  key: 'players'
+})
+
+if (data.value) {
+  userStore.setAllUsers(data.value.data)
+}
+
 </script>
 
 <template>
@@ -74,7 +75,7 @@ onMounted(async () => {
         class="rounded-2xl shadow-md p-4 mt-4 w-full max-w-sm"
       >
         <UForm @submit="handleProfileSelectorSubmit">
-          <USkeleton v-if="loadingUser" type="rect" class="w-full h-12" />
+          <USkeleton v-if="pending" type="rect" class="w-full h-12" />
           <div v-else class="flex flex-row gap-4">
             <USelect
               v-model="profileSelector"

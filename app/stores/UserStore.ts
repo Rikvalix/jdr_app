@@ -1,51 +1,48 @@
-import { da } from "@nuxt/ui/runtime/locale/index.js";
-import useSupabase from "~/composables/supabaseClient";
 import type UserModel from "~/models/UserModel";
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
 
-const useUserStore = defineStore("user", {
-  state: () => ({
-    user: {} as UserModel,
-    users: [] as UserModel[],
-  }),
+const useUserStore = defineStore(
+  "user",
+  () => {
+    const currentUser = ref<UserModel | null>(null);
+    const users = ref<UserModel[]>([]);
 
-  actions: {
-    async getAllUsers() {
-      if (this.users.length != 0) {
-        return;
-      }
+    const isLogin = computed(() => !!currentUser.value?.id);
 
-      const result = await useSupabase().from("players").select("*");
+    function setAllUsers(data: UserModel[]) {
+      users.value = data;
+    }
 
-      if (result.error) {
-        return [];
-      }
-      this.users = result.data as UserModel[];
-    },
+    async function getUserById(id: number) : Promise<UserModel | null> {
 
-    async getUserById(id: number) {
-      const { data, error } = await useSupabase()
-        .from("players")
-        .select("*")
-        .eq("id", id)
-        .single();
-      if (error) {
+      const response = await $fetch(`/api/players/${id}`);
+
+      if (response == undefined) {
         return null;
       }
-      return data;
-    },
 
-    setCurrentUser(user: UserModel) {
-      this.user = user;
-    },
-
-    getCurrentUser() {
-      return this.user;
-    },
-
-    isLogin() : boolean {
-      return this.user.id != null
+      return response.data as UserModel;
     }
+
+    function setCurrentUser(user: UserModel) {
+      currentUser.value = user;
+    }
+
+    return {
+      currentUser,
+      users,
+      isLogin,
+      setAllUsers,
+      getUserById,
+      setCurrentUser,
+    };
   },
-});
+  {
+    persist: {
+      storage: piniaPluginPersistedstate.sessionStorage(),
+    },
+  }
+);
 
 export default useUserStore;

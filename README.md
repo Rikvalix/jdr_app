@@ -7,4 +7,3 @@ Créer une campagne, ajoutez vos utilisateurs, créer des personnages facilement
 - Frontend: Nuxt 4
 - Database: Supabase
 - UI: Nuxt UI & Tailwind CSS
-

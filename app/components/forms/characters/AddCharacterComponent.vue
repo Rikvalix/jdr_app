@@ -7,6 +7,7 @@ import type CampaignModel from "~/models/CampaignModel";
 import type CharacterModel from "~/models/characters/CharacterModel";
 import useCharacterStore from "~/stores/CharacterStore";
 import useUserStore from "~/stores/UserStore";
+import useCampaignStore from "~/stores/CampaignStore";
 
 const characterSchema = v.object({
   name: v.pipe(v.string(), v.minLength(3)),
@@ -33,7 +34,7 @@ const campaignStore = useCampaignStore();
 const characterStore = useCharacterStore();
 const availableCampaigns = storeToRefs(campaignStore).campaigns;
 const toast = useToast();
-const currentUser = storeToRefs(userStore).user;
+const currentUser = storeToRefs(userStore).currentUser;
 
 const characterModel = ref<Partial<CharacterModel>>({
   name: "",
@@ -42,7 +43,7 @@ const characterModel = ref<Partial<CharacterModel>>({
   classe: "",
   avatar_url:
     "https://static.wikia.nocookie.net/leagueoflegends/images/0/08/AstroNautilus_Chroma_profileicon.png/revision/latest?cb=20200512193656",
-  player_id: currentUser.value.id,
+  player_id: currentUser.value?.id,
   campaign_id: undefined,
   force: 10,
   dexterite: 10,

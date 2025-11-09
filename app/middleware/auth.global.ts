@@ -5,7 +5,7 @@ const publicPaths = ["/"];
 export default defineNuxtRouteMiddleware((to, from) => {
   const userStore = useUserStore()
   
-  const isUserLoggedIn = userStore.isLogin();
+  const isUserLoggedIn = userStore.isLogin;
 
   const isPublicRoute = publicPaths.includes(to.path);
 
